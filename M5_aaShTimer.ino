@@ -5,7 +5,7 @@ byte sh1 = 0;
 int shnum = 0;
 float ShootTime = 0;
 float G;
-int th = 5;
+int th = 0;
 boolean start = false;
 //boolean st_time = false;
 //float lastshoot = 0;
@@ -55,7 +55,7 @@ void loop() {
   if (M5.BtnB.wasPressed()) {
     th++;
     if (th > 10) {
-      th = 1;
+      th = 0;
     };
     M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
     M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
