@@ -32,9 +32,10 @@ void setup() {
   pinMode(5, INPUT_PULLUP);
 
 
-  M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
   M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
+  M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
   M5.Lcd.setCursor( 16, 10); M5.Lcd.print("- ActionAir Shot Timer -");
+  M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
   M5.Lcd.setCursor( 35, 215); M5.Lcd.print("START");
   M5.Lcd.setCursor( 230, 215); M5.Lcd.print("Reset");
   //M5.Lcd.setCursor( 130, 215); M5.Lcd.print("Shoot");
