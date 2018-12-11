@@ -2,15 +2,16 @@
 #include <M5Stack.h>
 
 byte sh1 = 0;
-int shnum = 0;
-float ShootTime = 0;
+int shnum = 0; /// число выстрелов
+float ShootTime = 0; /// время выстрела
 float G;
-int th = 0;
-boolean start = false;
+int th = 0; /// задержка до старта
+boolean start = false; /// старт
 //boolean st_time = false;
 //float lastshoot = 0;
 //float fshoot = 0;
 //int shootcount =0;
+float FireonLed;
 
 
 //int delay=0;
@@ -25,7 +26,10 @@ void setup() {
   shN(0);
   G = millis();
 
-  pinMode(5, INPUT_PULLUP);
+  pinMode(22, INPUT_PULLUP); /// порт звукового датчика
+  pinMode(21, OUTPUT); /// порт светодиода
+
+  digitalWrite(21,LOW);
 
   M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
   M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
@@ -84,10 +88,11 @@ void loop() {
     M5.Lcd.setCursor( 115, 215); M5.Lcd.print("Delay:"); M5.Lcd.print(th / 10 % 10); M5.Lcd.print(th % 10);
   };
 
-  if (digitalRead(5) == HIGH && start) {
+  if (digitalRead(22) == HIGH && start) {
+    ShootTime = millis() - G;
+    FireonLed=millis(); digitalWrite(21,HIGH); 
     shnum++;
     shN(shnum);
-    ShootTime = millis() - G;
     displ(ShootTime);
     if (sh1 == 0) {
       shoot1(ShootTime);
@@ -95,7 +100,11 @@ void loop() {
     }
     delay(50);
   }
-  
+
+  if (millis()-FireonLed > 1000) {
+    digitalWrite(21,LOW); 
+    }
+    
   M5.update();
 }
 
