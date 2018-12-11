@@ -24,13 +24,8 @@ void setup() {
   shoot1(0);
   shN(0);
   G = millis();
-  //pinMode(5, INPUT);
-
-  //  adc1_config_width(ADC_WIDTH_12Bit);
-  //  adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_6db);
 
   pinMode(5, INPUT_PULLUP);
-
 
   M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
   M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
@@ -100,22 +95,7 @@ void loop() {
     }
     delay(50);
   }
-
-
-  //  //int v = adc1_get_raw(ADC1_CHANNEL_0);
-  //  //if (sh1 > 0) {dacWrite(25, 0);};  // for reduce hum noise
-  //  if (adc1_get_raw(ADC1_CHANNEL_0) < th * 400 && start) {
-  //    shnum++;
-  //    shN(shnum);
-  //    ShootTime = millis() - G;
-  //    displ(ShootTime);
-  //    if (sh1 == 0) {
-  //      shoot1(ShootTime);
-  //      sh1 = 1;
-  //    }
-  //    delay(20);
-  //  }
-
+  
   M5.update();
 }
 
