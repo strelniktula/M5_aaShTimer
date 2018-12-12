@@ -56,10 +56,10 @@ void loop() {
     ShootTime = 0;
     sh1 = 0;
     shnum = 0; shN(shnum);
-    G = millis();
     displ(ShootTime);
     shoot1(0);
     countdown(th);
+    G = millis();
     M5.Speaker.tone(1500, 300);
     //delay(300);
     start = true;
