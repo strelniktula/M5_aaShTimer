@@ -13,6 +13,9 @@ boolean start = false; /// старт
 //int shootcount =0;
 float FireonLed;
 
+int targetport = 22; /// порт звукового датчика
+int ledport = 21;  /// порт светодиода
+
 
 //int delay=0;
 //boolean pt=true;
@@ -26,11 +29,12 @@ void setup() {
   shN(0);
   G = millis();
 
-  pinMode(22, INPUT_PULLUP); /// порт звукового датчика
-  pinMode(21, OUTPUT); /// порт светодиода
+  pinMode(targetport, INPUT_PULLUP); 
+  pinMode(ledport, OUTPUT);
+  digitalWrite(ledport,LOW);
 
-  digitalWrite(21,LOW);
 
+// построение главного экрана
   M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
   M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
   M5.Lcd.setCursor( 16, 10); M5.Lcd.print("- ActionAir Shot Timer -");
@@ -52,7 +56,7 @@ void setup() {
 
 void loop() {
 
-  if (M5.BtnA.wasPressed() && !start) {
+  if (M5.BtnA.wasPressed() && !start) { // обработка кнопки старт
     ShootTime = 0;
     sh1 = 0;
     shnum = 0; shN(shnum);
@@ -65,7 +69,7 @@ void loop() {
     start = true;
   };
 
-  if (M5.BtnB.wasPressed() && !start) {
+  if (M5.BtnB.wasPressed() && !start) { // обработка кнопки задержка
     th++;
     if (th > 10) {
       th = 0;
@@ -76,7 +80,7 @@ void loop() {
   }
 
 
-  if (M5.BtnC.wasPressed()) {
+  if (M5.BtnC.wasPressed()) { // обработка кнопки сброс
     ShootTime = 0;
     shoot1(0);
     shnum = 0; shN(shnum);
@@ -88,9 +92,9 @@ void loop() {
     M5.Lcd.setCursor( 115, 215); M5.Lcd.print("Delay:"); M5.Lcd.print(th / 10 % 10); M5.Lcd.print(th % 10);
   };
 
-  if (digitalRead(22) == HIGH && start) {
+  if (digitalRead(targetport) == HIGH && start) {  /// фиксация попадания 
     ShootTime = millis() - G;
-    FireonLed=millis(); digitalWrite(21,HIGH); 
+    FireonLed=millis(); digitalWrite(ledport,HIGH); 
     shnum++;
     shN(shnum);
     displ(ShootTime);
@@ -101,8 +105,8 @@ void loop() {
     delay(50);
   }
 
-  if (millis()-FireonLed > 1000) {
-    digitalWrite(21,LOW); 
+  if (millis()-FireonLed > 1000) { //отключение светлячка через 1 сек
+    digitalWrite(ledport,LOW); 
     }
     
   M5.update();
