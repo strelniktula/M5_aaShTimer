@@ -61,12 +61,12 @@ void loop() {
     sh1 = 0;
     shnum = 0; shN(shnum);
     displ(ShootTime);
-    shoot1(0);
-    start = true;
+    shoot1(0);  
     if (digitalRead(targetport) == HIGH){ /// проверка готовности мишени
       start = false; 
       displ(888888); // мишень не готова. ошибка!!!
     } else {  // мишень в порядке! даем старт!!!
+      start = true;
       countdown(th);
       G = millis();
       M5.Speaker.tone(1500, 300);
