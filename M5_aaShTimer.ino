@@ -62,11 +62,15 @@ void loop() {
     shnum = 0; shN(shnum);
     displ(ShootTime);
     shoot1(0);
-    countdown(th);
-    G = millis();
-    M5.Speaker.tone(1500, 300);
-    //delay(300);
     start = true;
+    if (digitalRead(targetport) == HIGH){ /// проверка готовности мишени
+      start = false; 
+      displ(888888); // мишень не готова. ошибка!!!
+    } else {  // мишень в порядке! даем старт!!!
+      countdown(th);
+      G = millis();
+      M5.Speaker.tone(1500, 300);
+    };
   };
 
   if (M5.BtnB.wasPressed() && !start) { // обработка кнопки задержка
