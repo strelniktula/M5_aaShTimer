@@ -1,4 +1,4 @@
-#include <driver/adc.h>
+//#include <driver/adc.h>
 #include <M5Stack.h>
 
 byte sh1 = 0;
@@ -16,12 +16,15 @@ float FireonLed;
 int targetport = 22; /// порт звукового датчика
 int ledport = 21;  /// порт светодиода
 
+extern unsigned char ipsc[];
 
 //int delay=0;
 //boolean pt=true;
 
 void setup() {
   M5.begin();
+  M5.Lcd.drawBitmap(0, 0, 320, 240, (uint16_t *)ipsc);
+  delay(3000);
   M5.Lcd.fillScreen(TFT_BLACK);
   M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
   displ(ShootTime);
