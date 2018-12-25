@@ -1,4 +1,3 @@
-//#include <driver/adc.h>
 #include <M5Stack.h>
 
 byte sh1 = 0;
@@ -7,10 +6,7 @@ float ShootTime = 0; /// время выстрела
 float G;
 int th = 0; /// задержка до старта
 boolean start = false; /// старт
-//boolean st_time = false;
-//float lastshoot = 0;
-//float fshoot = 0;
-//int shootcount =0;
+
 float FireonLed;
 
 int targetport = 22; /// порт звукового датчика
@@ -18,32 +14,13 @@ int ledport = 21;  /// порт светодиода
 
 extern unsigned char ipsc[];
 
-//int delay=0;
-//boolean pt=true;
-
-void setup() {
-  M5.begin();
-  M5.Lcd.drawBitmap(0, 0, 320, 240, (uint16_t *)ipsc);
-  delay(3000);
-  M5.Lcd.fillScreen(TFT_BLACK);
-  M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
-  displ(ShootTime);
-  shoot1(0);
-  shN(0);
-  G = millis();
-
-  pinMode(targetport, INPUT_PULLUP); 
-  pinMode(ledport, OUTPUT);
-  digitalWrite(ledport,LOW);
-
-
-// построение главного экрана
-  M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
-  M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
-  M5.Lcd.setCursor( 16, 10); M5.Lcd.print("- ActionAir Shot Timer -");
+void main_scr(){
+  M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2); // построение главного экрана
+  M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+  M5.Lcd.setCursor( 16, 15); M5.Lcd.print("- ActionAir Shot Timer -");
   M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
   M5.Lcd.setCursor( 35, 215); M5.Lcd.print("START");
-  M5.Lcd.setCursor( 230, 215); M5.Lcd.print("Reset");
+  M5.Lcd.setCursor( 230, 215); M5.Lcd.print("Review");
   //M5.Lcd.setCursor( 130, 215); M5.Lcd.print("Shoot");
   M5.Lcd.setCursor( 115, 215); M5.Lcd.print("Delay:"); M5.Lcd.print(th / 10 % 10); M5.Lcd.print(th % 10);
 
@@ -54,74 +31,16 @@ void setup() {
   M5.Lcd.drawRoundRect(10, 45, 300, 160, 10, TFT_WHITE);
   M5.Lcd.drawRoundRect(6, 41, 308, 168, 12, TFT_WHITE);
   M5.Lcd.drawLine(20, 85, 300, 85, TFT_YELLOW);
-
 }
 
-void loop() {
+void displ(long ti, boolean er) {
 
-  if (M5.BtnA.wasPressed() && !start) { // обработка кнопки старт
-    ShootTime = 0;
-    sh1 = 0;
-    shnum = 0; shN(shnum);
-    displ(ShootTime);
-    shoot1(0);  
-    if (digitalRead(targetport) == HIGH){ /// проверка готовности мишени
-      start = false; 
-      displ(888888); // мишень не готова. ошибка!!!
-    } else {  // мишень в порядке! даем старт!!!
-      start = true;
-      countdown(th);
-      G = millis();
-      M5.Speaker.tone(1500, 300);
-    };
-  };
-
-  if (M5.BtnB.wasPressed() && !start) { // обработка кнопки задержка
-    th++;
-    if (th > 10) {
-      th = 0;
-    };
-    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-    M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
-    M5.Lcd.setCursor( 115, 215); M5.Lcd.print("Delay:"); M5.Lcd.print(th / 10 % 10); M5.Lcd.print(th % 10);
+  if (er) {
+    M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
+  } else {
+    M5.Lcd.setTextColor(TFT_RED, TFT_BLACK);
   }
-
-
-  if (M5.BtnC.wasPressed()) { // обработка кнопки сброс
-    ShootTime = 0;
-    shoot1(0);
-    shnum = 0; shN(shnum);
-    G = millis();
-    displ(ShootTime);
-    start = false;
-    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-    M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
-    M5.Lcd.setCursor( 115, 215); M5.Lcd.print("Delay:"); M5.Lcd.print(th / 10 % 10); M5.Lcd.print(th % 10);
-  };
-
-  if (digitalRead(targetport) == HIGH && start) {  /// фиксация попадания 
-    ShootTime = millis() - G;
-    FireonLed=millis(); digitalWrite(ledport,HIGH); 
-    shnum++;
-    shN(shnum);
-    displ(ShootTime);
-    if (sh1 == 0) {
-      shoot1(ShootTime);
-      sh1 = 1;
-    }
-    delay(50);
-  }
-
-  if (millis()-FireonLed > 1000) { //отключение светлячка через 1 сек
-    digitalWrite(ledport,LOW); 
-    }
-    
-  M5.update();
-}
-
-void displ(long ti) {
-
-  M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
+  
   M5.Lcd.setTextFont(7);
 
   int x = 25; int d = 65; int y = 100;
@@ -187,6 +106,13 @@ void shN(int s) {
   //  M5.Lcd.setCursor( x+5*d, y); M5.Lcd.print(dec2);
 }
 
+void scr_display(){
+  main_scr();
+  displ(0, true);
+  shoot1(0);
+  shN(0);
+}
+
 void countdown(int cd) {
   float lasttimecheck = millis();
   float timeinterval = 1000;
@@ -207,3 +133,104 @@ void countdown(int cd) {
   M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
   M5.Lcd.setCursor( 115, 215); M5.Lcd.print("Delay:"); M5.Lcd.print(dl / 10 % 10); M5.Lcd.print(dl % 10);
 }
+
+void start_timer (){
+    ShootTime = 0;
+    sh1 = 0;
+    shnum = 0; shN(shnum);
+    displ(ShootTime, true);
+    shoot1(0);
+    if (digitalRead(targetport) == HIGH){ /// проверка готовности мишени
+      start = false; /// мишень не готова!
+      //displ(888888, false);
+      M5.Lcd.fillScreen(TFT_BLACK);
+      M5.Lcd.setTextFont(2); M5.Lcd.setTextSize(2);
+      main_scr();
+      M5.Lcd.setTextColor(TFT_RED, TFT_BLACK);
+      M5.Lcd.setCursor( 60, 110); M5.Lcd.print("-==  ERROR  ==-");
+      M5.Lcd.setCursor( 63, 140); M5.Lcd.print("CHECK TARGET!");
+      delay(2000);
+      M5.Lcd.fillScreen(TFT_BLACK);
+      scr_display();
+    } else {  // мишень в порядке! даем старт!!!
+      start = true;
+      countdown(th);
+      G = millis();
+      M5.Speaker.tone(1500, 300);
+    };
+}
+
+void review_timer(){
+    ShootTime = 0;
+    shoot1(0);
+    shnum = 0; shN(shnum);
+    G = millis();
+    displ(ShootTime, true);
+    start = false;
+    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+    M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
+    M5.Lcd.setCursor( 115, 215); M5.Lcd.print("Delay:"); M5.Lcd.print(th / 10 % 10); M5.Lcd.print(th % 10);
+}
+
+void delay_timer(){
+  th++;
+  if (th > 10) {
+      th = 0;
+    };
+  M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+  M5.Lcd.setTextFont(1); M5.Lcd.setTextSize(2);
+  M5.Lcd.setCursor( 115, 215); M5.Lcd.print("Delay:"); M5.Lcd.print(th / 10 % 10); M5.Lcd.print(th % 10);
+}
+
+void setup() {
+  M5.begin();
+  M5.Lcd.drawBitmap(0, 0, 320, 240, (uint16_t *)ipsc);
+  delay(3000);
+  M5.Lcd.fillScreen(TFT_BLACK);
+  M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
+  displ(ShootTime,true);
+  shoot1(0);
+  shN(0);
+  G = millis();
+
+  pinMode(targetport, INPUT_PULLUP); 
+  pinMode(ledport, OUTPUT);
+  digitalWrite(ledport,LOW);
+
+  main_scr(); // выводим главный экран
+}
+
+void loop() {
+
+  if (M5.BtnA.wasPressed() && !start) { // обработка кнопки старт
+    start_timer ();
+  };
+
+  if (M5.BtnB.wasPressed() && !start) { // обработка кнопки задержка
+    delay_timer();
+  }
+
+  if (M5.BtnC.wasPressed()) { // обработка кнопки сброс
+    review_timer();
+  };
+
+  if (digitalRead(targetport) == HIGH && start) {  /// фиксация попадания 
+    ShootTime = millis() - G;
+    FireonLed=millis(); digitalWrite(ledport,HIGH); 
+    shnum++;
+    shN(shnum);
+    displ(ShootTime, true);
+    if (sh1 == 0) {
+      shoot1(ShootTime);
+      sh1 = 1;
+    }
+    delay(50);
+  }
+
+  if (millis()-FireonLed > 1000) { //отключение светлячка через 1 сек
+    digitalWrite(ledport,LOW); 
+    }
+    
+  M5.update();
+}
+
